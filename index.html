@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -109,7 +109,7 @@
       border:1px solid rgba(34,49,82,.7);
     }
     .riskfill{height:100%; width:0%;}
-    .note{font-size:12px; color:var(--muted); line-height:1.45}
+    .note{font-size:12px; color:var(--muted); line-height:1.45; white-space:pre-line}
     .hr{height:1px; background:rgba(34,49,82,.8); margin:10px 0}
     .tag{display:inline-block; font-size:12px; padding:3px 8px; border-radius:999px; border:1px solid rgba(34,49,82,.8); margin-right:6px; margin-top:6px; color:var(--muted)}
     .footerhint{grid-column:1/-1; text-align:center; color:var(--muted); font-size:12px; padding-top:6px}
@@ -123,7 +123,7 @@
         <div class="logo">NB</div>
         <div>
           <h1>NeuroBridge <span class="muted">MVP+</span></h1>
-          <p>Трекер симптомов • лекарства • инсайты • отчёт врачу</p>
+          <p>Symptom tracker • medication • insights • doctor report</p>
         </div>
       </div>
       <div class="pillrow">
@@ -135,75 +135,75 @@
 
     <!-- LEFT: FORM -->
     <div class="card">
-      <h2>Запись пациента</h2>
+      <h2>Patient Entry</h2>
       <div class="grid">
         <div class="row">
           <div>
-            <label>Пациент (для демо)</label>
-            <input id="patient" placeholder="например: Patient A" />
+            <label>Patient (demo)</label>
+            <input id="patient" placeholder="e.g., Patient A" />
           </div>
           <div>
-            <label>Дата/время</label>
+            <label>Date & time</label>
             <input id="dt" type="datetime-local" />
           </div>
         </div>
 
         <div class="row">
           <div>
-            <label>Категория</label>
+            <label>Category</label>
             <select id="category">
-              <option value="symptom">Симптом</option>
-              <option value="med">Лекарство</option>
-              <option value="exercise">Когнитивное упражнение</option>
+              <option value="symptom">Symptom</option>
+              <option value="med">Medication</option>
+              <option value="exercise">Cognitive exercise</option>
             </select>
           </div>
           <div>
-            <label>Тяжесть (1–10)</label>
+            <label>Severity (1–10)</label>
             <input id="severity" type="number" min="1" max="10" value="5" />
           </div>
         </div>
 
         <div>
-          <label>Заголовок</label>
-          <input id="title" placeholder="например: Тревога / Слуховые голоса / Приём: Рисперидон" />
+          <label>Title</label>
+          <input id="title" placeholder="e.g., Anxiety / Auditory voices / Dose: Risperidone" />
         </div>
 
         <div>
-          <label>Описание / заметки</label>
-          <textarea id="notes" placeholder="Триггеры, длительность, контекст, сон, аппетит и т.д."></textarea>
+          <label>Description / notes</label>
+          <textarea id="notes" placeholder="Triggers, duration, context, sleep, appetite, etc."></textarea>
         </div>
 
         <div class="row3">
           <div>
-            <label>Триггеры (через запятую)</label>
-            <input id="triggers" placeholder="стресс, недосып, конфликт" />
+            <label>Triggers (comma-separated)</label>
+            <input id="triggers" placeholder="stress, sleep deprivation, conflict" />
           </div>
           <div>
-            <label>Сон (часы)</label>
-            <input id="sleep" type="number" min="0" max="24" placeholder="например: 6" />
+            <label>Sleep (hours)</label>
+            <input id="sleep" type="number" min="0" max="24" placeholder="e.g., 6" />
           </div>
           <div>
-            <label>Препарат / дозировка (опционально)</label>
-            <input id="dose" placeholder="например: 2mg вечером" />
+            <label>Medication / dose (optional)</label>
+            <input id="dose" placeholder="e.g., 2mg evening" />
           </div>
         </div>
 
         <div class="btnrow">
-          <button id="saveBtn" onclick="saveEntry()">Добавить</button>
-          <button class="ghost" onclick="resetForm()">Сброс</button>
-          <button class="warn" id="demoBtn" onclick="loadDemo()">Заполнить демо-данными</button>
+          <button id="saveBtn" onclick="saveEntry()">Add</button>
+          <button class="ghost" onclick="resetForm()">Reset</button>
+          <button class="warn" id="demoBtn" onclick="loadDemo()">Load demo data</button>
         </div>
 
         <div class="hr"></div>
 
         <div class="btnrow">
-          <button class="ghost tiny" onclick="exportJSON()">Экспорт JSON</button>
-          <button class="ghost tiny" onclick="copyReport()">Отчёт врачу (копировать)</button>
-          <button class="danger tiny" onclick="wipeAll()">Удалить все данные</button>
+          <button class="ghost tiny" onclick="exportJSON()">Export JSON</button>
+          <button class="ghost tiny" onclick="copyReport()">Doctor report (copy)</button>
+          <button class="danger tiny" onclick="wipeAll()">Delete all data</button>
         </div>
 
         <div class="note">
-          ⚠️ Демо-MVP не заменяет врача. Данные хранятся локально в браузере (без отправки на сервер).
+          ⚠️ This demo MVP does not replace medical care. Data is stored locally in your browser (no server upload).
         </div>
       </div>
     </div>
@@ -211,18 +211,18 @@
     <!-- RIGHT: DASHBOARD -->
     <div class="grid">
       <div class="card">
-        <h2>Дашборд</h2>
+        <h2>Dashboard</h2>
         <div class="kpi">
           <div class="k">
-            <div class="muted">Записей (всего)</div>
+            <div class="muted">Total entries</div>
             <div class="v" id="k_total">0</div>
           </div>
           <div class="k">
-            <div class="muted">Средняя тяжесть (7 дней)</div>
+            <div class="muted">Average severity (7 days)</div>
             <div class="v" id="k_avg7">—</div>
           </div>
           <div class="k">
-            <div class="muted">Риск ухудшения (7 дней)</div>
+            <div class="muted">Deterioration risk (7 days)</div>
             <div class="v" id="k_risk">—</div>
           </div>
         </div>
@@ -230,31 +230,32 @@
 
       <div class="card split">
         <div>
-          <h2>Динамика тяжести (последние 14 записей)</h2>
+          <h2>Severity trend (last 14 entries)</h2>
           <canvas id="chart" width="900" height="320"></canvas>
-          <div class="note">График показывает тяжесть по времени. Для MVP без библиотек.</div>
+          <div class="note">Time-series severity chart. MVP uses no external libraries.</div>
         </div>
         <div class="insight">
-          <h2>AI-инсайт (офлайн)</h2>
-          <div class="muted">Скор риска</div>
+          <h2>AI insight (offline)</h2>
+          <div class="muted">Risk score</div>
           <div class="riskbar"><div class="riskfill" id="riskfill"></div></div>
-          <div class="note" id="insightText">Добавь записи — и здесь появятся инсайты.</div>
+          <div class="note" id="insightText">Add entries to generate insights.</div>
           <div class="hr"></div>
           <div class="note">
+            Pitch line: “We can replace rules with an NLP + time-series model, but for MVP we demonstrate interpretable heuristics + ethics.”
           </div>
         </div>
       </div>
 
       <div class="card">
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-          <h2 style="margin:0">История</h2>
+          <h2 style="margin:0">History</h2>
           <div class="btnrow" style="margin-left:auto">
-            <input id="q" placeholder="Поиск по заголовку/заметкам..." oninput="render()" style="width:280px; max-width:100%" />
+            <input id="q" placeholder="Search title/notes..." oninput="render()" style="width:280px; max-width:100%" />
             <select id="filterCat" onchange="render()" style="width:200px; max-width:100%">
-              <option value="all">Все категории</option>
-              <option value="symptom">Симптомы</option>
-              <option value="med">Лекарства</option>
-              <option value="exercise">Упражнения</option>
+              <option value="all">All categories</option>
+              <option value="symptom">Symptoms</option>
+              <option value="med">Medication</option>
+              <option value="exercise">Exercises</option>
             </select>
           </div>
         </div>
@@ -263,12 +264,18 @@
     </div>
 
     <div class="footerhint">
+      Pitch tip: “health + data + ethics”. Emphasize privacy (offline-first) and explainable insights.
     </div>
   </div>
 
 <script>
   const LS_KEY = "neurobridge_mvp_plus_v1";
 
+  /** Data model:
+   * entry = {
+   *  id, patient, dtISO, category, severity, title, notes, triggers[], sleep, dose
+   * }
+   */
   let entries = load();
   let editingId = null;
 
@@ -312,9 +319,9 @@
   }
 
   function categoryLabel(cat){
-    if(cat==="symptom") return "Симптом";
-    if(cat==="med") return "Лекарство";
-    return "Упражнение";
+    if(cat==="symptom") return "Symptom";
+    if(cat==="med") return "Medication";
+    return "Exercise";
   }
 
   function saveEntry(){
@@ -330,7 +337,7 @@
     const dose = document.getElementById("dose").value.trim() || null;
 
     if(!title){
-      alert("Добавь заголовок (например: Тревога / Приём лекарства).");
+      alert("Please add a title (e.g., Anxiety / Medication dose).");
       return;
     }
 
@@ -343,7 +350,7 @@
       const idx = entries.findIndex(x=>x.id===editingId);
       if(idx>=0) entries[idx] = e;
       editingId = null;
-      document.getElementById("saveBtn").textContent = "Добавить";
+      document.getElementById("saveBtn").textContent = "Add";
     }else{
       entries.push(e);
     }
@@ -365,14 +372,14 @@
     document.getElementById("dose").value = "";
     document.getElementById("dt").value = toDatetimeLocalValue(new Date());
     editingId = null;
-    document.getElementById("saveBtn").textContent = "Добавить";
+    document.getElementById("saveBtn").textContent = "Add";
   }
 
   function editEntry(id){
     const e = entries.find(x=>x.id===id);
     if(!e) return;
     editingId = id;
-    document.getElementById("saveBtn").textContent = "Сохранить";
+    document.getElementById("saveBtn").textContent = "Save";
     document.getElementById("patient").value = e.patient || "Patient";
     document.getElementById("dt").value = toDatetimeLocalValue(new Date(e.dtISO));
     document.getElementById("category").value = e.category;
@@ -386,14 +393,14 @@
   }
 
   function deleteEntry(id){
-    if(!confirm("Удалить запись?")) return;
+    if(!confirm("Delete this entry?")) return;
     entries = entries.filter(x=>x.id!==id);
     persist();
     render();
   }
 
   function wipeAll(){
-    if(!confirm("Точно удалить ВСЕ данные?")) return;
+    if(!confirm("Delete ALL data?")) return;
     entries = [];
     persist();
     render();
@@ -408,13 +415,13 @@
       return d.toISOString();
     }
     entries = [
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(0), category:"symptom", severity:8, title:"Тревога + навязчивые мысли", notes:"Усиление вечером, конфликт + недосып.", triggers:["стресс","недосып"], sleep:4, dose:null},
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(1), category:"med", severity:2, title:"Приём: Рисперидон", notes:"Принял по плану.", triggers:["режим"], sleep:6, dose:"2mg вечером"},
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(2), category:"symptom", severity:7, title:"Раздражительность", notes:"Сложно концентрироваться.", triggers:["перегруз"], sleep:5, dose:null},
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(3), category:"exercise", severity:3, title:"Дыхательная практика 4-7-8", notes:"10 минут, стало легче.", triggers:["саморегуляция"], sleep:6, dose:null},
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(5), category:"symptom", severity:6, title:"Плохой сон", notes:"Просыпался 3 раза.", triggers:["кофеин"], sleep:5, dose:null},
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(7), category:"symptom", severity:5, title:"Низкая мотивация", notes:"Трудно начать дела.", triggers:["усталость"], sleep:6, dose:null},
-      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(10), category:"med", severity:2, title:"Приём: Сертралин", notes:"Без пропусков.", triggers:["режим"], sleep:7, dose:"50mg утром"},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(0), category:"symptom", severity:8, title:"Anxiety + intrusive thoughts", notes:"Worse in the evening; conflict + sleep deprivation.", triggers:["stress","sleep deprivation"], sleep:4, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(1), category:"med", severity:2, title:"Medication taken: Risperidone", notes:"Taken as planned.", triggers:["routine"], sleep:6, dose:"2mg evening"},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(2), category:"symptom", severity:7, title:"Irritability", notes:"Hard to concentrate.", triggers:["overload"], sleep:5, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(3), category:"exercise", severity:3, title:"Breathing practice 4-7-8", notes:"10 minutes; felt calmer.", triggers:["self-regulation"], sleep:6, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(5), category:"symptom", severity:6, title:"Poor sleep", notes:"Woke up 3 times.", triggers:["caffeine"], sleep:5, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(7), category:"symptom", severity:5, title:"Low motivation", notes:"Hard to start tasks.", triggers:["fatigue"], sleep:6, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(10), category:"med", severity:2, title:"Medication taken: Sertraline", notes:"No missed doses.", triggers:["routine"], sleep:7, dose:"50mg morning"},
     ].map(normalizeEntry).sort((a,b)=> new Date(b.dtISO)-new Date(a.dtISO));
     persist();
     render();
@@ -452,23 +459,23 @@
     const lastNotes = symptoms.slice(0,3).map(e=> `- ${fmtDate(e.dtISO)} | ${e.title} (sev ${e.severity}/10): ${truncate(e.notes||"", 120)}`).join("\n");
 
     return [
-      "NeuroBridge — краткий отчёт (последние 7 дней)",
-      `Пациент: ${entries[0]?.patient || "—"}`,
-      `Период: ${fmtDate(cutoff.toISOString())} — ${fmtDate(now.toISOString())}`,
+      "NeuroBridge — brief report (last 7 days)",
+      `Patient: ${entries[0]?.patient || "—"}`,
+      `Period: ${fmtDate(cutoff.toISOString())} — ${fmtDate(now.toISOString())}`,
       "",
-      `Симптомов записано: ${symptoms.length}`,
-      `Лекарств отмечено: ${meds.length}`,
-      `Упражнений: ${ex.length}`,
-      `Средняя тяжесть симптомов: ${avg!==null ? avg.toFixed(1) : "—"}/10`,
-      `Оценка риска ухудшения (эвристика): ${Math.round(risk*100)}%`,
+      `Symptom entries: ${symptoms.length}`,
+      `Medication entries: ${meds.length}`,
+      `Exercises: ${ex.length}`,
+      `Average symptom severity: ${avg!==null ? avg.toFixed(1) : "—"}/10`,
+      `Deterioration risk estimate (heuristic): ${Math.round(risk*100)}%`,
       "",
-      "Частые триггеры:",
+      "Common triggers:",
       trigSorted.length ? trigSorted.map(([t,c])=>`- ${t}: ${c}x`).join("\n") : "—",
       "",
-      "Последние наблюдения:",
+      "Recent observations:",
       lastNotes || "—",
       "",
-      "Примечание: это MVP-демонстрация (offline-first, объяснимые эвристики), не медицинская диагностика."
+      "Note: MVP demo (offline-first, explainable heuristics). Not a medical diagnosis."
     ].join("\n");
   }
 
@@ -478,7 +485,7 @@
     const txt = summarizeForDoctor();
     try{
       await navigator.clipboard.writeText(txt);
-      alert("Отчёт скопирован в буфер обмена.");
+      alert("Report copied to clipboard.");
     }catch(e){
       // fallback
       const ta = document.createElement("textarea");
@@ -487,7 +494,7 @@
       ta.select();
       document.execCommand("copy");
       ta.remove();
-      alert("Отчёт скопирован (fallback).");
+      alert("Report copied (fallback).");
     }
   }
 
@@ -497,13 +504,23 @@
   }
 
   function computeRiskScore(windowEntries){
-    const symptoms = windowEntries.filter(e=>e.category==="symptom").sort((a,b)=> new Date(a.dtISO)-new Date(b.dtISO));
+    // Interpretable heuristics -> score 0..1
+    // Factors:
+    // 1) avg symptom severity
+    // 2) upward trend last 3 symptom entries
+    // 3) low sleep (<6) occurrences
+    // 4) presence of high-risk keywords in notes/title
+    const symptoms = windowEntries
+      .filter(e=>e.category==="symptom")
+      .sort((a,b)=> new Date(a.dtISO)-new Date(b.dtISO));
+
     let score = 0;
 
     if(symptoms.length){
       const avg = symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length;
       score += Math.min(0.45, (avg/10)*0.45);
 
+      // trend: compare last 3 vs previous 3
       const last3 = symptoms.slice(-3);
       const prev3 = symptoms.slice(-6,-3);
       if(last3.length>=2 && prev3.length>=2){
@@ -523,16 +540,14 @@
 
     const text = windowEntries.map(e=>`${e.title||""} ${e.notes||""}`).join(" ").toLowerCase();
     const keywords = [
-      "голос", "галлю", "параной", "бред", "суиц", "самоповреж", "паник", "агресс", "не спал", "insomnia",
-      "halluc", "paranoi", "delusion", "suic", "self-harm", "panic", "aggress", "no sleep"
+      "voice","voices","halluc","paranoi","delusion","suic","self-harm","panic","aggress","no sleep","insomnia",
+      "голос","галлю","параной","бред","суиц","самоповреж","паник","агресс","не спал"
     ];
     let hits = 0;
     keywords.forEach(k=>{ if(text.includes(k)) hits++; });
     score += Math.min(0.22, hits*0.05);
 
-    // clamp 0..1
-    score = Math.max(0, Math.min(1, score));
-    return score;
+    return Math.max(0, Math.min(1, score));
   }
 
   function buildInsights(){
@@ -543,9 +558,8 @@
     const last7 = entries.filter(e=> new Date(e.dtISO) >= cutoff);
     const risk = computeRiskScore(last7);
 
-    // Build textual insight
     if(!last7.length){
-      setRiskUI(0, "Добавь записи — и здесь появятся инсайты.");
+      setRiskUI(0, "Add entries to generate insights.");
       return;
     }
 
@@ -553,38 +567,43 @@
     const meds = last7.filter(e=>e.category==="med");
     const avgSev = symptoms.length ? (symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length) : null;
 
+    // triggers correlation: triggers appearing with high severity
     const trigHigh = {};
     symptoms.forEach(e=>{
       if(e.severity >= 7){
         (e.triggers||[]).forEach(t=> trigHigh[t]=(trigHigh[t]||0)+1);
       }
     });
-    const topHigh = Object.entries(trigHigh).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+    const topHigh = Object.entries(trigHigh)
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0,3)
+      .map(x=>x[0]);
 
+    // sleep insight
     const sleepVals = symptoms.map(e=>e.sleep).filter(v=>typeof v==="number");
     const avgSleep = sleepVals.length ? (sleepVals.reduce((a,b)=>a+b,0)/sleepVals.length) : null;
 
-    let level = risk < 0.33 ? "Низкий" : (risk < 0.66 ? "Средний" : "Высокий");
+    let level = risk < 0.33 ? "Low" : (risk < 0.66 ? "Moderate" : "High");
     let recs = [];
 
-    if(avgSleep !== null && avgSleep < 6) recs.push("Сон < 6ч коррелирует с усилением симптомов — стоит стабилизировать режим сна.");
-    if(meds.length === 0) recs.push("Не отмечены приёмы лекарств за 7 дней — для защиты объясни, что в реальном продукте это критичный модуль адгеренса.");
-    if(topHigh.length) recs.push(`Триггеры, которые чаще встречались при высокой тяжести: ${topHigh.join(", ")}.`);
-    if(avgSev !== null && avgSev >= 7) recs.push("Средняя тяжесть высокая — рекомендовать контакт с врачом/куратором при ухудшении.");
-    if(!recs.length) recs.push("Динамика выглядит стабильной. Продолжай логирование и отмечай контекст (сон/стресс/соц.нагрузка).");
+    if(avgSleep !== null && avgSleep < 6) recs.push("Sleep < 6h correlates with worse symptoms — stabilize sleep routine.");
+    if(meds.length === 0) recs.push("No medication entries in the last 7 days — in a real product this is a critical adherence module.");
+    if(topHigh.length) recs.push(`Triggers most associated with high severity: ${topHigh.join(", ")}.`);
+    if(avgSev !== null && avgSev >= 7) recs.push("Average severity is high — consider contacting a clinician if worsening continues.");
+    if(!recs.length) recs.push("Trend looks relatively stable. Keep logging context (sleep/stress/social load).");
 
     const txt = [
-      `Риск ухудшения: ${Math.round(risk*100)}% (${level})`,
-      avgSev !== null ? `Средняя тяжесть симптомов за 7 дней: ${avgSev.toFixed(1)}/10` : `Симптомов за 7 дней: ${symptoms.length}`,
-      avgSleep !== null ? `Средний сон: ${avgSleep.toFixed(1)}ч` : "Сон не заполнен достаточно для статистики.",
+      `Deterioration risk: ${Math.round(risk*100)}% (${level})`,
+      avgSev !== null ? `Average symptom severity (7 days): ${avgSev.toFixed(1)}/10` : `Symptom entries (7 days): ${symptoms.length}`,
+      avgSleep !== null ? `Average sleep: ${avgSleep.toFixed(1)}h` : "Not enough sleep data for statistics.",
       "",
-      "Инсайты:",
+      "Insights:",
       ...recs.map(s=>"• "+s),
       "",
-      "Этика (на защите):",
-      "• данные локально, минимизация сбора",
-      "• объяснимые правила вместо «чёрного ящика» в MVP",
-      "• кнопка экспорта отчёта, без хранения на сервере"
+      "Ethics (pitch):",
+      "• local-only storage, data minimization",
+      "• explainable heuristics in MVP (no black-box)",
+      "• exportable doctor report, no server retention"
     ].join("\n");
 
     setRiskUI(risk, txt);
@@ -627,7 +646,6 @@
     const canvas = document.getElementById("chart");
     const ctx = canvas.getContext("2d");
 
-
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(rect.width * dpr);
@@ -635,18 +653,15 @@
     ctx.setTransform(dpr,0,0,dpr,0,0);
 
     const w = rect.width, h = rect.height;
-
-  
     ctx.clearRect(0,0,w,h);
 
-    const items = entries.slice(0,14).slice().reverse(); 
-    const points = items.map(e=> ({x: e, y: e.severity}))
-    
+    const items = entries.slice(0,14).slice().reverse(); // chronological
+    const points = items.map(e=> ({x: e, y: e.severity}));
+
     const padL = 34, padR = 12, padT = 12, padB = 26;
     const innerW = w - padL - padR;
     const innerH = h - padT - padB;
 
-  
     ctx.strokeStyle = "rgba(255,255,255,.08)";
     ctx.lineWidth = 1;
     for(let i=1;i<=10;i+=1){
@@ -666,11 +681,10 @@
 
     if(points.length < 2){
       ctx.fillStyle = "rgba(234,240,255,.6)";
-      ctx.fillText("Недостаточно данных для графика — добавь записи.", padL, padT+18);
+      ctx.fillText("Not enough data for chart — add entries.", padL, padT+18);
       return;
     }
 
-    
     const xStep = innerW / (points.length-1);
     const xy = points.map((p, idx)=> {
       const x = padL + idx*xStep;
@@ -678,14 +692,12 @@
       return {x, y, e: p.x};
     });
 
-
     ctx.lineWidth = 2;
     ctx.strokeStyle = "rgba(90,136,255,.9)";
     ctx.beginPath();
     ctx.moveTo(xy[0].x, xy[0].y);
     for(let i=1;i<xy.length;i++) ctx.lineTo(xy[i].x, xy[i].y);
     ctx.stroke();
-
 
     for(const p of xy){
       const sev = p.e.severity;
@@ -696,7 +708,6 @@
       ctx.fill();
     }
 
-    
     const first = xy[0].e, mid = xy[Math.floor(xy.length/2)].e, last = xy[xy.length-1].e;
     const fmt = (iso)=> new Date(iso).toLocaleDateString();
     ctx.fillStyle = "rgba(234,240,255,.55)";
@@ -706,7 +717,6 @@
   }
 
   function render(){
-    
     const q = (document.getElementById("q").value || "").toLowerCase().trim();
     const fc = document.getElementById("filterCat").value;
 
@@ -718,13 +728,13 @@
     list.innerHTML = "";
 
     if(!view.length){
-      list.innerHTML = `<div class="muted">Пока нет записей по текущему фильтру. Нажми “Заполнить демо-данными”.</div>`;
+      list.innerHTML = `<div class="muted">No entries for the current filter. Click “Load demo data”.</div>`;
     }else{
       for(const e of view){
         const sevCls = severityClass(e.severity);
         const tags = (e.triggers||[]).slice(0,6).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("");
-        const dose = e.dose ? `<span class="badge">Дозировка: ${escapeHtml(e.dose)}</span>` : "";
-        const sleep = typeof e.sleep==="number" ? `<span class="badge">Сон: ${e.sleep}ч</span>` : "";
+        const dose = e.dose ? `<span class="badge">Dose: ${escapeHtml(e.dose)}</span>` : "";
+        const sleep = typeof e.sleep==="number" ? `<span class="badge">Sleep: ${e.sleep}h</span>` : "";
         list.insertAdjacentHTML("beforeend", `
           <div class="item">
             <div class="meta">
@@ -741,8 +751,8 @@
             <div style="margin-top:6px">${tags}</div>
             <div class="hr"></div>
             <div class="btnrow">
-              <button class="tiny warn" onclick="editEntry('${e.id}')">Редактировать</button>
-              <button class="tiny danger" onclick="deleteEntry('${e.id}')">Удалить</button>
+              <button class="tiny warn" onclick="editEntry('${e.id}')">Edit</button>
+              <button class="tiny danger" onclick="deleteEntry('${e.id}')">Delete</button>
             </div>
           </div>
         `);
@@ -763,7 +773,6 @@
       .replaceAll("'","&#039;");
   }
 
-  
   window.addEventListener("resize", ()=> drawChart());
   render();
 </script>
