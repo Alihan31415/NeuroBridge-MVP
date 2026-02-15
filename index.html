@@ -1,1 +1,793 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NeuroBridge — MVP+</title>
+  <style>
+    :root{
+      --bg:#0b0f1a; --panel:#121a2b; --panel2:#0f1726; --text:#eaf0ff;
+      --muted:#9fb0d0; --line:#223152; --accent:#5a88ff; --warn:#ffb020; --bad:#ff5b6e; --ok:#4adf88;
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --r:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; padding:22px; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(90,136,255,.18), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 10%, rgba(255,91,110,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px; margin:0 auto; display:grid; grid-template-columns: 420px 1fr; gap:18px;}
+    @media (max-width: 980px){ .wrap{grid-template-columns:1fr; } }
+    .topbar{
+      grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:14px 16px; background:linear-gradient(180deg, rgba(18,26,43,.85), rgba(18,26,43,.55));
+      border:1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow);
+      position:sticky; top:12px; backdrop-filter: blur(10px); z-index:10;
+    }
+    .brand{display:flex; align-items:center; gap:10px;}
+    .logo{
+      width:40px; height:40px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(90,136,255,1), rgba(74,223,136,.9));
+      display:grid; place-items:center; font-weight:800; color:#081027;
+      box-shadow: 0 10px 20px rgba(90,136,255,.25);
+    }
+    .brand h1{font-size:16px; margin:0; line-height:1.2}
+    .brand p{margin:0; font-size:12px; color:var(--muted)}
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .pill{
+      padding:6px 10px; border:1px solid var(--line); border-radius:999px; color:var(--muted);
+      font-size:12px; background:rgba(15,23,38,.6);
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(18,26,43,.85), rgba(18,26,43,.55));
+      border:1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .card h2{margin:0 0 10px; font-size:14px; color:#dfe8ff; letter-spacing:.2px}
+    .grid{display:grid; gap:10px}
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
+    input, textarea, select{
+      width:100%; padding:10px 10px; border-radius:12px; border:1px solid rgba(34,49,82,.9);
+      background: rgba(15,23,38,.85); color: var(--text);
+      outline:none;
+    }
+    textarea{min-height:90px; resize:vertical}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    .row3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    @media (max-width: 520px){ .row,.row3{grid-template-columns:1fr} }
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap}
+    button{
+      border:0; border-radius:12px; padding:10px 12px; cursor:pointer;
+      background: var(--accent); color:#06102c; font-weight:700;
+      box-shadow: 0 10px 18px rgba(90,136,255,.22);
+    }
+    .ghost{background:transparent; color:var(--text); border:1px solid var(--line); box-shadow:none}
+    .danger{background: var(--bad); color:#1a0610; box-shadow: 0 10px 18px rgba(255,91,110,.18)}
+    .warn{background: var(--warn); color:#1a1206; box-shadow: 0 10px 18px rgba(255,176,32,.18)}
+    .tiny{padding:8px 10px; font-size:12px; border-radius:10px}
+    .muted{color:var(--muted); font-size:12px}
+    .list{display:grid; gap:10px}
+    .item{
+      background: rgba(15,23,38,.6);
+      border:1px solid rgba(34,49,82,.8);
+      border-radius: 14px;
+      padding:12px;
+    }
+    .meta{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+    .title{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    .badge{
+      font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(34,49,82,.8);
+      color:var(--muted); background: rgba(18,26,43,.6);
+    }
+    .sev{
+      font-weight:800; font-size:12px; padding:4px 10px; border-radius:999px; color:#06102c;
+    }
+    .sev.ok{background: var(--ok)}
+    .sev.warn{background: var(--warn)}
+    .sev.bad{background: var(--bad)}
+    .kpi{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px}
+    @media (max-width: 720px){ .kpi{grid-template-columns:1fr} }
+    .k{
+      background: rgba(15,23,38,.55);
+      border:1px solid rgba(34,49,82,.8);
+      border-radius: 14px; padding:12px;
+    }
+    .k .v{font-size:18px; font-weight:900}
+    canvas{width:100%; height:220px; border-radius:14px; border:1px solid rgba(34,49,82,.8); background: rgba(15,23,38,.55)}
+    .split{display:grid; grid-template-columns: 1.2fr .8fr; gap:10px}
+    @media (max-width: 920px){ .split{grid-template-columns:1fr} }
+    .insight{
+      border-radius:14px; border:1px solid rgba(34,49,82,.8);
+      background: rgba(15,23,38,.55); padding:12px;
+      min-height:220px;
+    }
+    .riskbar{
+      height:10px; border-radius:999px; background: rgba(255,255,255,.08); overflow:hidden; margin:8px 0 10px;
+      border:1px solid rgba(34,49,82,.7);
+    }
+    .riskfill{height:100%; width:0%;}
+    .note{font-size:12px; color:var(--muted); line-height:1.45}
+    .hr{height:1px; background:rgba(34,49,82,.8); margin:10px 0}
+    .tag{display:inline-block; font-size:12px; padding:3px 8px; border-radius:999px; border:1px solid rgba(34,49,82,.8); margin-right:6px; margin-top:6px; color:var(--muted)}
+    .footerhint{grid-column:1/-1; text-align:center; color:var(--muted); font-size:12px; padding-top:6px}
+    a{color:#bcd0ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">NB</div>
+        <div>
+          <h1>NeuroBridge <span class="muted">MVP+</span></h1>
+          <p>Трекер симптомов • лекарства • инсайты • отчёт врачу</p>
+        </div>
+      </div>
+      <div class="pillrow">
+        <div class="pill">Offline / LocalStorage</div>
+        <div class="pill">Ethics-first</div>
+        <div class="pill">Data → Insights</div>
+      </div>
+    </div>
 
+    <!-- LEFT: FORM -->
+    <div class="card">
+      <h2>Запись пациента</h2>
+      <div class="grid">
+        <div class="row">
+          <div>
+            <label>Пациент (для демо)</label>
+            <input id="patient" placeholder="например: Patient A" />
+          </div>
+          <div>
+            <label>Дата/время</label>
+            <input id="dt" type="datetime-local" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Категория</label>
+            <select id="category">
+              <option value="symptom">Симптом</option>
+              <option value="med">Лекарство</option>
+              <option value="exercise">Когнитивное упражнение</option>
+            </select>
+          </div>
+          <div>
+            <label>Тяжесть (1–10)</label>
+            <input id="severity" type="number" min="1" max="10" value="5" />
+          </div>
+        </div>
+
+        <div>
+          <label>Заголовок</label>
+          <input id="title" placeholder="например: Тревога / Слуховые голоса / Приём: Рисперидон" />
+        </div>
+
+        <div>
+          <label>Описание / заметки</label>
+          <textarea id="notes" placeholder="Триггеры, длительность, контекст, сон, аппетит и т.д."></textarea>
+        </div>
+
+        <div class="row3">
+          <div>
+            <label>Триггеры (через запятую)</label>
+            <input id="triggers" placeholder="стресс, недосып, конфликт" />
+          </div>
+          <div>
+            <label>Сон (часы)</label>
+            <input id="sleep" type="number" min="0" max="24" placeholder="например: 6" />
+          </div>
+          <div>
+            <label>Препарат / дозировка (опционально)</label>
+            <input id="dose" placeholder="например: 2mg вечером" />
+          </div>
+        </div>
+
+        <div class="btnrow">
+          <button id="saveBtn" onclick="saveEntry()">Добавить</button>
+          <button class="ghost" onclick="resetForm()">Сброс</button>
+          <button class="warn" id="demoBtn" onclick="loadDemo()">Заполнить демо-данными</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="btnrow">
+          <button class="ghost tiny" onclick="exportJSON()">Экспорт JSON</button>
+          <button class="ghost tiny" onclick="copyReport()">Отчёт врачу (копировать)</button>
+          <button class="danger tiny" onclick="wipeAll()">Удалить все данные</button>
+        </div>
+
+        <div class="note">
+          ⚠️ Демо-MVP не заменяет врача. Данные хранятся локально в браузере (без отправки на сервер).
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: DASHBOARD -->
+    <div class="grid">
+      <div class="card">
+        <h2>Дашборд</h2>
+        <div class="kpi">
+          <div class="k">
+            <div class="muted">Записей (всего)</div>
+            <div class="v" id="k_total">0</div>
+          </div>
+          <div class="k">
+            <div class="muted">Средняя тяжесть (7 дней)</div>
+            <div class="v" id="k_avg7">—</div>
+          </div>
+          <div class="k">
+            <div class="muted">Риск ухудшения (7 дней)</div>
+            <div class="v" id="k_risk">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card split">
+        <div>
+          <h2>Динамика тяжести (последние 14 записей)</h2>
+          <canvas id="chart" width="900" height="320"></canvas>
+          <div class="note">График показывает тяжесть по времени. Для MVP без библиотек.</div>
+        </div>
+        <div class="insight">
+          <h2>AI-инсайт (офлайн)</h2>
+          <div class="muted">Скор риска</div>
+          <div class="riskbar"><div class="riskfill" id="riskfill"></div></div>
+          <div class="note" id="insightText">Добавь записи — и здесь появятся инсайты.</div>
+          <div class="hr"></div>
+          <div class="note">
+            Как это выглядит на защите: “Мы можем заменить rules на модель (NLP + time-series),
+            но для MVP демонстрируем интерпретируемые эвристики + этику.”
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+          <h2 style="margin:0">История</h2>
+          <div class="btnrow" style="margin-left:auto">
+            <input id="q" placeholder="Поиск по заголовку/заметкам..." oninput="render()" style="width:280px; max-width:100%" />
+            <select id="filterCat" onchange="render()" style="width:200px; max-width:100%">
+              <option value="all">Все категории</option>
+              <option value="symptom">Симптомы</option>
+              <option value="med">Лекарства</option>
+              <option value="exercise">Упражнения</option>
+            </select>
+          </div>
+        </div>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+
+    <div class="footerhint">
+      Совет для питча: “health + data + ethics”. Скажи, что дизайн учитывает приватность (offline-first) и объяснимость инсайтов.
+    </div>
+  </div>
+
+<script>
+  const LS_KEY = "neurobridge_mvp_plus_v1";
+
+  /** Data model:
+   * entry = {
+   *  id, patient, dtISO, category, severity, title, notes, triggers[], sleep, dose
+   * }
+   */
+  let entries = load();
+  let editingId = null;
+
+  // init datetime-local default
+  (function initDT(){
+    const dt = document.getElementById("dt");
+    const now = new Date();
+    dt.value = toDatetimeLocalValue(now);
+    if(!document.getElementById("patient").value) document.getElementById("patient").value = "Patient A";
+  })();
+
+  function toDatetimeLocalValue(d){
+    const pad = (n)=> String(n).padStart(2,"0");
+    const yyyy = d.getFullYear();
+    const mm = pad(d.getMonth()+1);
+    const dd = pad(d.getDate());
+    const hh = pad(d.getHours());
+    const mi = pad(d.getMinutes());
+    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+  }
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }catch(e){ return []; }
+  }
+  function persist(){
+    localStorage.setItem(LS_KEY, JSON.stringify(entries));
+  }
+
+  function normalizeEntry(e){
+    const dt = e.dtISO ? new Date(e.dtISO) : new Date();
+    return {...e, dtISO: dt.toISOString()};
+  }
+
+  function severityClass(s){
+    if(s >= 8) return "bad";
+    if(s >= 5) return "warn";
+    return "ok";
+  }
+
+  function categoryLabel(cat){
+    if(cat==="symptom") return "Симптом";
+    if(cat==="med") return "Лекарство";
+    return "Упражнение";
+  }
+
+  function saveEntry(){
+    const patient = document.getElementById("patient").value.trim() || "Patient";
+    const dtLocal = document.getElementById("dt").value;
+    const dtISO = dtLocal ? new Date(dtLocal).toISOString() : new Date().toISOString();
+    const category = document.getElementById("category").value;
+    const severity = Math.max(1, Math.min(10, Number(document.getElementById("severity").value || 5)));
+    const title = document.getElementById("title").value.trim();
+    const notes = document.getElementById("notes").value.trim();
+    const triggers = document.getElementById("triggers").value.split(",").map(s=>s.trim()).filter(Boolean);
+    const sleep = document.getElementById("sleep").value ? Number(document.getElementById("sleep").value) : null;
+    const dose = document.getElementById("dose").value.trim() || null;
+
+    if(!title){
+      alert("Добавь заголовок (например: Тревога / Приём лекарства).");
+      return;
+    }
+
+    const e = normalizeEntry({
+      id: editingId || crypto.randomUUID(),
+      patient, dtISO, category, severity, title, notes, triggers, sleep, dose
+    });
+
+    if(editingId){
+      const idx = entries.findIndex(x=>x.id===editingId);
+      if(idx>=0) entries[idx] = e;
+      editingId = null;
+      document.getElementById("saveBtn").textContent = "Добавить";
+    }else{
+      entries.push(e);
+    }
+
+    entries.sort((a,b)=> new Date(b.dtISO) - new Date(a.dtISO));
+    persist();
+    resetForm(false);
+    render();
+  }
+
+  function resetForm(resetPatient=true){
+    if(resetPatient) document.getElementById("patient").value = "Patient A";
+    document.getElementById("category").value = "symptom";
+    document.getElementById("severity").value = 5;
+    document.getElementById("title").value = "";
+    document.getElementById("notes").value = "";
+    document.getElementById("triggers").value = "";
+    document.getElementById("sleep").value = "";
+    document.getElementById("dose").value = "";
+    document.getElementById("dt").value = toDatetimeLocalValue(new Date());
+    editingId = null;
+    document.getElementById("saveBtn").textContent = "Добавить";
+  }
+
+  function editEntry(id){
+    const e = entries.find(x=>x.id===id);
+    if(!e) return;
+    editingId = id;
+    document.getElementById("saveBtn").textContent = "Сохранить";
+    document.getElementById("patient").value = e.patient || "Patient";
+    document.getElementById("dt").value = toDatetimeLocalValue(new Date(e.dtISO));
+    document.getElementById("category").value = e.category;
+    document.getElementById("severity").value = e.severity;
+    document.getElementById("title").value = e.title;
+    document.getElementById("notes").value = e.notes || "";
+    document.getElementById("triggers").value = (e.triggers||[]).join(", ");
+    document.getElementById("sleep").value = (e.sleep ?? "");
+    document.getElementById("dose").value = (e.dose ?? "");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function deleteEntry(id){
+    if(!confirm("Удалить запись?")) return;
+    entries = entries.filter(x=>x.id!==id);
+    persist();
+    render();
+  }
+
+  function wipeAll(){
+    if(!confirm("Точно удалить ВСЕ данные?")) return;
+    entries = [];
+    persist();
+    render();
+  }
+
+  function loadDemo(){
+    const base = new Date();
+    function daysAgo(n){
+      const d = new Date(base);
+      d.setDate(d.getDate()-n);
+      d.setHours(20, 0, 0, 0);
+      return d.toISOString();
+    }
+    entries = [
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(0), category:"symptom", severity:8, title:"Тревога + навязчивые мысли", notes:"Усиление вечером, конфликт + недосып.", triggers:["стресс","недосып"], sleep:4, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(1), category:"med", severity:2, title:"Приём: Рисперидон", notes:"Принял по плану.", triggers:["режим"], sleep:6, dose:"2mg вечером"},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(2), category:"symptom", severity:7, title:"Раздражительность", notes:"Сложно концентрироваться.", triggers:["перегруз"], sleep:5, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(3), category:"exercise", severity:3, title:"Дыхательная практика 4-7-8", notes:"10 минут, стало легче.", triggers:["саморегуляция"], sleep:6, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(5), category:"symptom", severity:6, title:"Плохой сон", notes:"Просыпался 3 раза.", triggers:["кофеин"], sleep:5, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(7), category:"symptom", severity:5, title:"Низкая мотивация", notes:"Трудно начать дела.", triggers:["усталость"], sleep:6, dose:null},
+      {id:crypto.randomUUID(), patient:"Patient A", dtISO:daysAgo(10), category:"med", severity:2, title:"Приём: Сертралин", notes:"Без пропусков.", triggers:["режим"], sleep:7, dose:"50mg утром"},
+    ].map(normalizeEntry).sort((a,b)=> new Date(b.dtISO)-new Date(a.dtISO));
+    persist();
+    render();
+  }
+
+  function exportJSON(){
+    const blob = new Blob([JSON.stringify(entries, null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "neurobridge_export.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function summarizeForDoctor(){
+    // last 7 days
+    const now = new Date();
+    const cutoff = new Date(now);
+    cutoff.setDate(cutoff.getDate()-7);
+
+    const last7 = entries.filter(e=> new Date(e.dtISO) >= cutoff);
+    const symptoms = last7.filter(e=>e.category==="symptom");
+    const meds = last7.filter(e=>e.category==="med");
+    const ex = last7.filter(e=>e.category==="exercise");
+
+    const avg = symptoms.length ? (symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length) : null;
+    const risk = computeRiskScore(last7);
+
+    const topTriggers = {};
+    last7.forEach(e=> (e.triggers||[]).forEach(t=> topTriggers[t]=(topTriggers[t]||0)+1 ));
+    const trigSorted = Object.entries(topTriggers).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+    // last 3 symptom notes
+    const lastNotes = symptoms.slice(0,3).map(e=> `- ${fmtDate(e.dtISO)} | ${e.title} (sev ${e.severity}/10): ${truncate(e.notes||"", 120)}`).join("\n");
+
+    return [
+      "NeuroBridge — краткий отчёт (последние 7 дней)",
+      `Пациент: ${entries[0]?.patient || "—"}`,
+      `Период: ${fmtDate(cutoff.toISOString())} — ${fmtDate(now.toISOString())}`,
+      "",
+      `Симптомов записано: ${symptoms.length}`,
+      `Лекарств отмечено: ${meds.length}`,
+      `Упражнений: ${ex.length}`,
+      `Средняя тяжесть симптомов: ${avg!==null ? avg.toFixed(1) : "—"}/10`,
+      `Оценка риска ухудшения (эвристика): ${Math.round(risk*100)}%`,
+      "",
+      "Частые триггеры:",
+      trigSorted.length ? trigSorted.map(([t,c])=>`- ${t}: ${c}x`).join("\n") : "—",
+      "",
+      "Последние наблюдения:",
+      lastNotes || "—",
+      "",
+      "Примечание: это MVP-демонстрация (offline-first, объяснимые эвристики), не медицинская диагностика."
+    ].join("\n");
+  }
+
+  function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+"…" : s; }
+
+  async function copyReport(){
+    const txt = summarizeForDoctor();
+    try{
+      await navigator.clipboard.writeText(txt);
+      alert("Отчёт скопирован в буфер обмена.");
+    }catch(e){
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      alert("Отчёт скопирован (fallback).");
+    }
+  }
+
+  function fmtDate(iso){
+    const d = new Date(iso);
+    return d.toLocaleString();
+  }
+
+  function computeRiskScore(windowEntries){
+    // Interpretable heuristics -> score 0..1
+    // Factors:
+    // 1) avg symptom severity
+    // 2) upward trend last 3 symptom entries
+    // 3) sleep low (<6) occurrences
+    // 4) presence of high-risk keywords in notes/title (language-agnostic-ish)
+    const symptoms = windowEntries.filter(e=>e.category==="symptom").sort((a,b)=> new Date(a.dtISO)-new Date(b.dtISO));
+    let score = 0;
+
+    if(symptoms.length){
+      const avg = symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length;
+      score += Math.min(0.45, (avg/10)*0.45);
+
+      // trend: compare last 3 vs previous 3
+      const last3 = symptoms.slice(-3);
+      const prev3 = symptoms.slice(-6,-3);
+      if(last3.length>=2 && prev3.length>=2){
+        const a1 = last3.reduce((a,b)=>a+b.severity,0)/last3.length;
+        const a0 = prev3.reduce((a,b)=>a+b.severity,0)/prev3.length;
+        const delta = a1 - a0;
+        if(delta > 0.8) score += 0.18;
+        else if(delta > 0.3) score += 0.10;
+      }else if(last3.length>=3){
+        // if only last3 exist, check monotonic increase
+        const inc = (last3[2].severity - last3[0].severity);
+        if(inc >= 2) score += 0.10;
+      }
+    }
+
+    const lowSleep = windowEntries.filter(e=> typeof e.sleep==="number" && e.sleep < 6).length;
+    score += Math.min(0.18, lowSleep*0.06);
+
+    const text = windowEntries.map(e=>`${e.title||""} ${e.notes||""}`).join(" ").toLowerCase();
+    const keywords = [
+      "голос", "галлю", "параной", "бред", "суиц", "самоповреж", "паник", "агресс", "не спал", "insomnia",
+      "halluc", "paranoi", "delusion", "suic", "self-harm", "panic", "aggress", "no sleep"
+    ];
+    let hits = 0;
+    keywords.forEach(k=>{ if(text.includes(k)) hits++; });
+    score += Math.min(0.22, hits*0.05);
+
+    // clamp 0..1
+    score = Math.max(0, Math.min(1, score));
+    return score;
+  }
+
+  function buildInsights(){
+    const now = new Date();
+    const cutoff = new Date(now);
+    cutoff.setDate(cutoff.getDate()-7);
+
+    const last7 = entries.filter(e=> new Date(e.dtISO) >= cutoff);
+    const risk = computeRiskScore(last7);
+
+    // Build textual insight
+    if(!last7.length){
+      setRiskUI(0, "Добавь записи — и здесь появятся инсайты.");
+      return;
+    }
+
+    const symptoms = last7.filter(e=>e.category==="symptom");
+    const meds = last7.filter(e=>e.category==="med");
+    const avgSev = symptoms.length ? (symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length) : null;
+
+    // triggers correlation: triggers appearing with high severity
+    const trigHigh = {};
+    symptoms.forEach(e=>{
+      if(e.severity >= 7){
+        (e.triggers||[]).forEach(t=> trigHigh[t]=(trigHigh[t]||0)+1);
+      }
+    });
+    const topHigh = Object.entries(trigHigh).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+
+    // sleep insight
+    const sleepVals = symptoms.map(e=>e.sleep).filter(v=>typeof v==="number");
+    const avgSleep = sleepVals.length ? (sleepVals.reduce((a,b)=>a+b,0)/sleepVals.length) : null;
+
+    let level = risk < 0.33 ? "Низкий" : (risk < 0.66 ? "Средний" : "Высокий");
+    let recs = [];
+
+    if(avgSleep !== null && avgSleep < 6) recs.push("Сон < 6ч коррелирует с усилением симптомов — стоит стабилизировать режим сна.");
+    if(meds.length === 0) recs.push("Не отмечены приёмы лекарств за 7 дней — для защиты объясни, что в реальном продукте это критичный модуль адгеренса.");
+    if(topHigh.length) recs.push(`Триггеры, которые чаще встречались при высокой тяжести: ${topHigh.join(", ")}.`);
+    if(avgSev !== null && avgSev >= 7) recs.push("Средняя тяжесть высокая — рекомендовать контакт с врачом/куратором при ухудшении.");
+    if(!recs.length) recs.push("Динамика выглядит стабильной. Продолжай логирование и отмечай контекст (сон/стресс/соц.нагрузка).");
+
+    const txt = [
+      `Риск ухудшения: ${Math.round(risk*100)}% (${level})`,
+      avgSev !== null ? `Средняя тяжесть симптомов за 7 дней: ${avgSev.toFixed(1)}/10` : `Симптомов за 7 дней: ${symptoms.length}`,
+      avgSleep !== null ? `Средний сон: ${avgSleep.toFixed(1)}ч` : "Сон не заполнен достаточно для статистики.",
+      "",
+      "Инсайты:",
+      ...recs.map(s=>"• "+s),
+      "",
+      "Этика (на защите):",
+      "• данные локально, минимизация сбора",
+      "• объяснимые правила вместо «чёрного ящика» в MVP",
+      "• кнопка экспорта отчёта, без хранения на сервере"
+    ].join("\n");
+
+    setRiskUI(risk, txt);
+  }
+
+  function setRiskUI(risk, text){
+    const rf = document.getElementById("riskfill");
+    rf.style.width = `${Math.round(risk*100)}%`;
+    // gradient based on risk (no need to set fixed colors? but UI needs; it's internal CSS-ish)
+    rf.style.background = risk < 0.33 ? "linear-gradient(90deg, rgba(74,223,136,.95), rgba(90,136,255,.85))"
+                     : risk < 0.66 ? "linear-gradient(90deg, rgba(255,176,32,.95), rgba(90,136,255,.85))"
+                     : "linear-gradient(90deg, rgba(255,91,110,.95), rgba(255,176,32,.85))";
+    document.getElementById("insightText").textContent = text;
+  }
+
+  function computeKPIs(){
+    document.getElementById("k_total").textContent = entries.length;
+
+    const now = new Date();
+    const cutoff = new Date(now);
+    cutoff.setDate(cutoff.getDate()-7);
+    const last7 = entries.filter(e=> new Date(e.dtISO) >= cutoff);
+    const symptoms7 = last7.filter(e=>e.category==="symptom");
+
+    if(symptoms7.length){
+      const avg = symptoms7.reduce((a,b)=>a+b.severity,0)/symptoms7.length;
+      document.getElementById("k_avg7").textContent = avg.toFixed(1) + "/10";
+    }else{
+      document.getElementById("k_avg7").textContent = "—";
+    }
+
+    if(last7.length){
+      const risk = computeRiskScore(last7);
+      document.getElementById("k_risk").textContent = Math.round(risk*100) + "%";
+    }else{
+      document.getElementById("k_risk").textContent = "—";
+    }
+  }
+
+  function drawChart(){
+    const canvas = document.getElementById("chart");
+    const ctx = canvas.getContext("2d");
+
+    // Fit canvas to CSS size for crispness
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    const w = rect.width, h = rect.height;
+
+    // Background
+    ctx.clearRect(0,0,w,h);
+
+    // Data: last 14 entries (all cats) but plot symptom severity, fallback others as small
+    const items = entries.slice(0,14).slice().reverse(); // chronological
+    const points = items.map(e=> ({x: e, y: e.severity}));
+
+    // Axes padding
+    const padL = 34, padR = 12, padT = 12, padB = 26;
+    const innerW = w - padL - padR;
+    const innerH = h - padT - padB;
+
+    // Grid lines (1..10)
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    for(let i=1;i<=10;i+=1){
+      const yy = padT + innerH * (1 - i/10);
+      ctx.beginPath();
+      ctx.moveTo(padL, yy);
+      ctx.lineTo(padL+innerW, yy);
+      ctx.stroke();
+    }
+
+    // Labels left
+    ctx.fillStyle = "rgba(234,240,255,.55)";
+    ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    for(let i=0;i<=10;i+=5){
+      const yy = padT + innerH * (1 - i/10);
+      ctx.fillText(String(i), 8, yy+4);
+    }
+
+    if(points.length < 2){
+      ctx.fillStyle = "rgba(234,240,255,.6)";
+      ctx.fillText("Недостаточно данных для графика — добавь записи.", padL, padT+18);
+      return;
+    }
+
+    // Compute X positions
+    const xStep = innerW / (points.length-1);
+    const xy = points.map((p, idx)=> {
+      const x = padL + idx*xStep;
+      const y = padT + innerH * (1 - (p.y/10));
+      return {x, y, e: p.x};
+    });
+
+    // Line
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(90,136,255,.9)";
+    ctx.beginPath();
+    ctx.moveTo(xy[0].x, xy[0].y);
+    for(let i=1;i<xy.length;i++) ctx.lineTo(xy[i].x, xy[i].y);
+    ctx.stroke();
+
+    // Points
+    for(const p of xy){
+      const sev = p.e.severity;
+      const col = sev >= 8 ? "rgba(255,91,110,.95)" : (sev >= 5 ? "rgba(255,176,32,.95)" : "rgba(74,223,136,.95)");
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // X labels: first, mid, last dates
+    const first = xy[0].e, mid = xy[Math.floor(xy.length/2)].e, last = xy[xy.length-1].e;
+    const fmt = (iso)=> new Date(iso).toLocaleDateString();
+    ctx.fillStyle = "rgba(234,240,255,.55)";
+    ctx.fillText(fmt(first.dtISO), padL, h-8);
+    ctx.fillText(fmt(mid.dtISO), padL+innerW/2-24, h-8);
+    ctx.fillText(fmt(last.dtISO), padL+innerW-70, h-8);
+  }
+
+  function render(){
+    // filters
+    const q = (document.getElementById("q").value || "").toLowerCase().trim();
+    const fc = document.getElementById("filterCat").value;
+
+    let view = entries.slice();
+    if(fc !== "all") view = view.filter(e=>e.category===fc);
+    if(q) view = view.filter(e=> (e.title||"").toLowerCase().includes(q) || (e.notes||"").toLowerCase().includes(q));
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    if(!view.length){
+      list.innerHTML = `<div class="muted">Пока нет записей по текущему фильтру. Нажми “Заполнить демо-данными”.</div>`;
+    }else{
+      for(const e of view){
+        const sevCls = severityClass(e.severity);
+        const tags = (e.triggers||[]).slice(0,6).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join("");
+        const dose = e.dose ? `<span class="badge">Дозировка: ${escapeHtml(e.dose)}</span>` : "";
+        const sleep = typeof e.sleep==="number" ? `<span class="badge">Сон: ${e.sleep}ч</span>` : "";
+        list.insertAdjacentHTML("beforeend", `
+          <div class="item">
+            <div class="meta">
+              <div class="title">
+                <span class="sev ${sevCls}">sev ${e.severity}/10</span>
+                <span class="badge">${categoryLabel(e.category)}</span>
+                <strong>${escapeHtml(e.title)}</strong>
+              </div>
+              <div class="muted">${escapeHtml(e.patient || "Patient")} • ${fmtDate(e.dtISO)}</div>
+            </div>
+            <div class="hr"></div>
+            <div class="muted">${escapeHtml(e.notes || "—")}</div>
+            <div style="margin-top:8px">${dose} ${sleep}</div>
+            <div style="margin-top:6px">${tags}</div>
+            <div class="hr"></div>
+            <div class="btnrow">
+              <button class="tiny warn" onclick="editEntry('${e.id}')">Редактировать</button>
+              <button class="tiny danger" onclick="deleteEntry('${e.id}')">Удалить</button>
+            </div>
+          </div>
+        `);
+      }
+    }
+
+    computeKPIs();
+    drawChart();
+    buildInsights();
+  }
+
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // initial render + redraw on resize
+  window.addEventListener("resize", ()=> drawChart());
+  render();
+</script>
+</body>
+</html>
