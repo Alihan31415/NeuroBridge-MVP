@@ -241,8 +241,6 @@
           <div class="note" id="insightText">Добавь записи — и здесь появятся инсайты.</div>
           <div class="hr"></div>
           <div class="note">
-            Как это выглядит на защите: “Мы можем заменить rules на модель (NLP + time-series),
-            но для MVP демонстрируем интерпретируемые эвристики + этику.”
           </div>
         </div>
       </div>
@@ -265,18 +263,12 @@
     </div>
 
     <div class="footerhint">
-      Совет для питча: “health + data + ethics”. Скажи, что дизайн учитывает приватность (offline-first) и объяснимость инсайтов.
     </div>
   </div>
 
 <script>
   const LS_KEY = "neurobridge_mvp_plus_v1";
 
-  /** Data model:
-   * entry = {
-   *  id, patient, dtISO, category, severity, title, notes, triggers[], sleep, dose
-   * }
-   */
   let entries = load();
   let editingId = null;
 
@@ -505,12 +497,6 @@
   }
 
   function computeRiskScore(windowEntries){
-    // Interpretable heuristics -> score 0..1
-    // Factors:
-    // 1) avg symptom severity
-    // 2) upward trend last 3 symptom entries
-    // 3) sleep low (<6) occurrences
-    // 4) presence of high-risk keywords in notes/title (language-agnostic-ish)
     const symptoms = windowEntries.filter(e=>e.category==="symptom").sort((a,b)=> new Date(a.dtISO)-new Date(b.dtISO));
     let score = 0;
 
@@ -518,7 +504,6 @@
       const avg = symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length;
       score += Math.min(0.45, (avg/10)*0.45);
 
-      // trend: compare last 3 vs previous 3
       const last3 = symptoms.slice(-3);
       const prev3 = symptoms.slice(-6,-3);
       if(last3.length>=2 && prev3.length>=2){
@@ -528,7 +513,6 @@
         if(delta > 0.8) score += 0.18;
         else if(delta > 0.3) score += 0.10;
       }else if(last3.length>=3){
-        // if only last3 exist, check monotonic increase
         const inc = (last3[2].severity - last3[0].severity);
         if(inc >= 2) score += 0.10;
       }
@@ -569,7 +553,6 @@
     const meds = last7.filter(e=>e.category==="med");
     const avgSev = symptoms.length ? (symptoms.reduce((a,b)=>a+b.severity,0)/symptoms.length) : null;
 
-    // triggers correlation: triggers appearing with high severity
     const trigHigh = {};
     symptoms.forEach(e=>{
       if(e.severity >= 7){
@@ -578,7 +561,6 @@
     });
     const topHigh = Object.entries(trigHigh).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
 
-    // sleep insight
     const sleepVals = symptoms.map(e=>e.sleep).filter(v=>typeof v==="number");
     const avgSleep = sleepVals.length ? (sleepVals.reduce((a,b)=>a+b,0)/sleepVals.length) : null;
 
@@ -611,7 +593,6 @@
   function setRiskUI(risk, text){
     const rf = document.getElementById("riskfill");
     rf.style.width = `${Math.round(risk*100)}%`;
-    // gradient based on risk (no need to set fixed colors? but UI needs; it's internal CSS-ish)
     rf.style.background = risk < 0.33 ? "linear-gradient(90deg, rgba(74,223,136,.95), rgba(90,136,255,.85))"
                      : risk < 0.66 ? "linear-gradient(90deg, rgba(255,176,32,.95), rgba(90,136,255,.85))"
                      : "linear-gradient(90deg, rgba(255,91,110,.95), rgba(255,176,32,.85))";
@@ -646,7 +627,7 @@
     const canvas = document.getElementById("chart");
     const ctx = canvas.getContext("2d");
 
-    // Fit canvas to CSS size for crispness
+
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     canvas.width = Math.round(rect.width * dpr);
@@ -655,19 +636,17 @@
 
     const w = rect.width, h = rect.height;
 
-    // Background
+  
     ctx.clearRect(0,0,w,h);
 
-    // Data: last 14 entries (all cats) but plot symptom severity, fallback others as small
-    const items = entries.slice(0,14).slice().reverse(); // chronological
-    const points = items.map(e=> ({x: e, y: e.severity}));
-
-    // Axes padding
+    const items = entries.slice(0,14).slice().reverse(); 
+    const points = items.map(e=> ({x: e, y: e.severity}))
+    
     const padL = 34, padR = 12, padT = 12, padB = 26;
     const innerW = w - padL - padR;
     const innerH = h - padT - padB;
 
-    // Grid lines (1..10)
+  
     ctx.strokeStyle = "rgba(255,255,255,.08)";
     ctx.lineWidth = 1;
     for(let i=1;i<=10;i+=1){
@@ -678,7 +657,6 @@
       ctx.stroke();
     }
 
-    // Labels left
     ctx.fillStyle = "rgba(234,240,255,.55)";
     ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
     for(let i=0;i<=10;i+=5){
@@ -692,7 +670,7 @@
       return;
     }
 
-    // Compute X positions
+    
     const xStep = innerW / (points.length-1);
     const xy = points.map((p, idx)=> {
       const x = padL + idx*xStep;
@@ -700,7 +678,7 @@
       return {x, y, e: p.x};
     });
 
-    // Line
+
     ctx.lineWidth = 2;
     ctx.strokeStyle = "rgba(90,136,255,.9)";
     ctx.beginPath();
@@ -708,7 +686,7 @@
     for(let i=1;i<xy.length;i++) ctx.lineTo(xy[i].x, xy[i].y);
     ctx.stroke();
 
-    // Points
+
     for(const p of xy){
       const sev = p.e.severity;
       const col = sev >= 8 ? "rgba(255,91,110,.95)" : (sev >= 5 ? "rgba(255,176,32,.95)" : "rgba(74,223,136,.95)");
@@ -718,7 +696,7 @@
       ctx.fill();
     }
 
-    // X labels: first, mid, last dates
+    
     const first = xy[0].e, mid = xy[Math.floor(xy.length/2)].e, last = xy[xy.length-1].e;
     const fmt = (iso)=> new Date(iso).toLocaleDateString();
     ctx.fillStyle = "rgba(234,240,255,.55)";
@@ -728,7 +706,7 @@
   }
 
   function render(){
-    // filters
+    
     const q = (document.getElementById("q").value || "").toLowerCase().trim();
     const fc = document.getElementById("filterCat").value;
 
@@ -785,7 +763,7 @@
       .replaceAll("'","&#039;");
   }
 
-  // initial render + redraw on resize
+  
   window.addEventListener("resize", ()=> drawChart());
   render();
 </script>
